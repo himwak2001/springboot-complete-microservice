@@ -1,0 +1,47 @@
+services:
+  configserver:
+    image: "himanshu930/configserver:s6"
+    container_name: configserver-ms
+    ports:
+      - "8071:8071"
+    healthcheck:
+      test: "curl --fail --silent localhost:8071/actuator/health/readiness | grep UP || exit 1"
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+    extends:
+      file: common-config.yml
+      service: microservice-base-config
+
+  greets:
+    image: "himanshu930/greet-service:s6"
+    container_name: greet-ms
+    ports:
+      - "8080:8080"
+    depends_on:
+      configserver:
+        condition: service_healthy
+    environment:
+      SPRING_APPLICATION_NAME: "greet-service"
+    extends:
+      file: common-config.yml
+      service: microservice-configserver-config
+
+  welcome:
+    image: "himanshu930/welcome-service:s6"
+    container_name: welcome-ms
+    ports:
+      - "8090:8090"
+    depends_on:
+      configserver:
+        condition: service_healthy
+    environment:
+      SPRING_APPLICATION_NAME: "welcome-service"
+    extends:
+      file: common-config.yml
+      service: microservice-configserver-config
+
+networks:
+  demo-greet-welcome:
+    driver: "bridge"
