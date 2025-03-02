@@ -46,7 +46,7 @@ services:
         condition: service_healthy
     environment:
       SPRING_APPLICATION_NAME: "greet-service"
-      SPRING_DATASOURCE_URL: "jdbc:mysql://greetdb:3307/greetdb?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true"
+      SPRING_DATASOURCE_URL: "jdbc:mysql://greetdb:3306/greetdb?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true"
     extends:
       file: common-config.yml
       service: microservice-configserver-config
