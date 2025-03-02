@@ -1,6 +1,18 @@
 spring:
   application:
     name: greet-service
+  profiles:
+    active: "prod"
+  datasource:
+    url: jdbc:mysql://localhost:3307/greetdb?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true
+    username: root
+    password: root
+  jpa:
+    show-sql: true
+    open-in-view: false
+    hibernate:
+      database-platform: org.hibernate.dialect.MySQL8Dialect
+      ddl-auto: update
   config:
     import: optional:configserver:http://localhost:8071
 

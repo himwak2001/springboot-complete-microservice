@@ -1,6 +1,26 @@
 services:
+  welcomedb:
+    container_name: welcomedb
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_DATABASE: welcomedb
+    extends:                            # We want to run the mysql container in the same network, so that it would be visible to the service
+      file: common-config.yml
+      service: microservice-db-config
+
+  greetdb:
+    container_name: greetdb
+    ports:
+      - "3307:3306"
+    environment:
+      MYSQL_DATABASE: greetdb
+    extends: # We want to run the mysql container in the same network, so that it would be visible to the service
+      file: common-config.yml
+      service: microservice-db-config
+
   configserver:
-    image: "himanshu930/configserver:s6"
+    image: "himanshu930/configserver:s7"
     container_name: configserver-ms
     ports:
       - "8071:8071"
@@ -14,30 +34,36 @@ services:
       file: common-config.yml
       service: microservice-base-config
 
-  greets:
-    image: "himanshu930/greet-service:s6"
+  greet:
+    image: "himanshu930/greet-service:s7"
     container_name: greet-ms
     ports:
       - "8080:8080"
     depends_on:
+      greetdb:
+        condition: service_healthy
       configserver:
         condition: service_healthy
     environment:
       SPRING_APPLICATION_NAME: "greet-service"
+      SPRING_DATASOURCE_URL: "jdbc:mysql://greetdb:3307/greetdb?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true"
     extends:
       file: common-config.yml
       service: microservice-configserver-config
 
   welcome:
-    image: "himanshu930/welcome-service:s6"
+    image: "himanshu930/welcome-service:s7"
     container_name: welcome-ms
     ports:
       - "8090:8090"
     depends_on:
+      welcomedb:
+        condition: service_healthy
       configserver:
         condition: service_healthy
     environment:
       SPRING_APPLICATION_NAME: "welcome-service"
+      SPRING_DATASOURCE_URL: "jdbc:mysql://welcomedb:3306/welcomedb?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true"
     extends:
       file: common-config.yml
       service: microservice-configserver-config
