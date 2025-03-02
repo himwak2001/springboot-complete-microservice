@@ -1,18 +1,20 @@
 services:
+  # A generic network service used by other services to ensure they are in the same network
   network-deploy-service:
     networks:
-      - demo-greet-welcome
+      - demo-greet-welcome          # Specifies the network (demo-greet-welcome) that this service will join
 
+  # MySQL database configuration service for microservices
   microservice-db-config:
     extends:
-      service: network-deploy-service
-    image: mysql
-    healthcheck:
-      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]
-      timeout: 10s # wait for 10s
-      retries: 10  # retry to run the above command 10 times
-      interval: 10s  # keep on checking at the interval of 10s
-      start_period: 10s
+      service: network-deploy-service       # Extends the configuration from the network-deploy-service, ensuring network compatibility
+    image: mysql      # Docker image for MySQL database
+    healthcheck:      # Configures a health check for the MySQL service to ensure it's running correctly
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]    # Ping the MySQL service to check its health
+      timeout: 10s # Timeout after 10 seconds if the test fails
+      retries: 10  # Retry the health check 10 times if it fails
+      interval: 10s  # Check every 10 seconds
+      start_period: 10s   # Allow the service to start and be ready for 10 seconds before starting health checks
     environment:
       MYSQL_ROOT_PASSWORD: root
 
@@ -22,13 +24,13 @@ services:
     deploy:
       resources:
         limits:
-          memory: 700m
+          memory: 700m      # Limits the memory usage to 700MB for this service
 
   microservice-configserver-config:
     extends:
       service: microservice-base-config
     environment:
       SPRING_PROFILES_ACTIVE: default
-      SPRING_CONFIG_IMPORT: configserver:http://configserver:8071/
+      SPRING_CONFIG_IMPORT: configserver:http://configserver:8071/      # Configures the config server URL for Spring to load configurations
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: root

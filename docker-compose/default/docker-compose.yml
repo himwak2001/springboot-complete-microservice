@@ -1,13 +1,13 @@
 services:
   welcomedb:
-    container_name: welcomedb
+    container_name: welcomedb                       # Name of the container
     ports:
-      - "3306:3306"
+      - "3306:3306"                                 # Mapping the container port 3306 to the host port 3306
     environment:
-      MYSQL_DATABASE: welcomedb
-    extends:                            # We want to run the mysql container in the same network, so that it would be visible to the service
-      file: common-config.yml
-      service: microservice-db-config
+      MYSQL_DATABASE: welcomedb                     # The name of the database to be created in MySQL
+    extends:                                        # Extending configurations from a common file (e.g., network settings)
+      file: common-config.yml                       # Path to the common configuration file
+      service: microservice-db-config               # Refers to a specific configuration section in the file
 
   greetdb:
     container_name: greetdb
@@ -15,16 +15,16 @@ services:
       - "3307:3306"
     environment:
       MYSQL_DATABASE: greetdb
-    extends: # We want to run the mysql container in the same network, so that it would be visible to the service
+    extends:
       file: common-config.yml
       service: microservice-db-config
 
   configserver:
-    image: "himanshu930/configserver:s7"
-    container_name: configserver-ms
+    image: "himanshu930/configserver:s7"             # Docker image for the config server
+    container_name: configserver-ms                  # Name of the container
     ports:
       - "8071:8071"
-    healthcheck:
+    healthcheck:                                     # Health check configuration to ensure service is running properly
       test: "curl --fail --silent localhost:8071/actuator/health/readiness | grep UP || exit 1"
       interval: 10s
       timeout: 5s
@@ -39,13 +39,14 @@ services:
     container_name: greet-ms
     ports:
       - "8080:8080"
-    depends_on:
+    depends_on:                                     # Specifies dependencies, ensuring the greetdb and configserver are healthy
       greetdb:
         condition: service_healthy
       configserver:
         condition: service_healthy
     environment:
-      SPRING_APPLICATION_NAME: "greet-service"
+      SPRING_APPLICATION_NAME: "greet-service"      # Spring application name for the greet service
+      # JDBC URL for the database connection, using the greetdb container
       SPRING_DATASOURCE_URL: "jdbc:mysql://greetdb:3306/greetdb?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true"
     extends:
       file: common-config.yml
@@ -63,11 +64,13 @@ services:
         condition: service_healthy
     environment:
       SPRING_APPLICATION_NAME: "welcome-service"
+      # In case of external cloud database, add the external cloud database url here and remove the above cloud configuration
       SPRING_DATASOURCE_URL: "jdbc:mysql://welcomedb:3306/welcomedb?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true"
     extends:
       file: common-config.yml
       service: microservice-configserver-config
 
+# Network configuration for the services to communicate with each other
 networks:
   demo-greet-welcome:
-    driver: "bridge"
+    driver: "bridge"            # Using the 'bridge' driver for networking between containers
