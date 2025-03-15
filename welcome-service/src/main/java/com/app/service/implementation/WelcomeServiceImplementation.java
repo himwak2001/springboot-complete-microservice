@@ -1,7 +1,8 @@
-package com.app.service;
+package com.app.service.implementation;
 
 import com.app.entity.Welcome;
 import com.app.repository.IWelcomeRepository;
+import com.app.service.IWelcomeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

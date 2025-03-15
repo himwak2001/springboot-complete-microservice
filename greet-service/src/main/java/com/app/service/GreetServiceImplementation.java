@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class GreetServiceImplementation implements IGreetService{
@@ -20,5 +21,10 @@ public class GreetServiceImplementation implements IGreetService{
     @Override
     public List<Greet> getGreetList() {
         return greetRepository.findAll();
+    }
+
+    @Override
+    public Greet getGreetById(Integer id) {
+        return greetRepository.findById(id).get();
     }
 }

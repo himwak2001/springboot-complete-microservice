@@ -1,7 +1,7 @@
 package com.app.controller;
 
 import com.app.entity.Welcome;
-import com.app.service.WelcomeServiceImplementation;
+import com.app.service.implementation.WelcomeServiceImplementation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
