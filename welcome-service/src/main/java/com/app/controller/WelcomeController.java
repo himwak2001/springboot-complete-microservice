@@ -1,5 +1,6 @@
 package com.app.controller;
 
+import com.app.dto.GreetDto;
 import com.app.entity.Welcome;
 import com.app.service.implementation.WelcomeServiceImplementation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/welcome")
+@RequestMapping("/api/welcome")
 @RefreshScope
 public class WelcomeController {
     @Value("${welcome-name}")
@@ -32,5 +33,10 @@ public class WelcomeController {
     @GetMapping("/list")
     public List<Welcome> getWelcomeList(){
         return welcomeServiceImplementation.getWelcomeList();
+    }
+
+    @GetMapping("/greet-info/{id}")
+    public GreetDto getGreetInfo(@PathVariable Integer id){
+        return welcomeServiceImplementation.getGreetInfo(id);
     }
 }

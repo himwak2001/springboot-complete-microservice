@@ -8,6 +8,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 @FeignClient(value = "GREET-SERVICE")
 public interface GreetFeignClient {
 
-    @GetMapping("/api/get-greet/{id}")
+    @GetMapping("/api/greet/get-greet/{id}")
     public GreetDto getGreetBasedOnId(@PathVariable Integer id);
 }
