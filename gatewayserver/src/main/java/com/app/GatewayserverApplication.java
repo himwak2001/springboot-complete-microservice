@@ -1,0 +1,30 @@
+package com.app;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.gateway.route.RouteLocator;
+import org.springframework.cloud.gateway.route.builder.RouteLocatorBuilder;
+import org.springframework.context.annotation.Bean;
+
+@SpringBootApplication
+public class GatewayserverApplication {
+
+	public static void main(String[] args) {
+		SpringApplication.run(GatewayserverApplication.class, args);
+	}
+
+	// creating the custom routing configuration
+	@Bean
+	public RouteLocator greetWelcomeRouteConfig(RouteLocatorBuilder routeLocatorBuilder){
+		return routeLocatorBuilder.routes()
+				.route(p -> p
+						.path("/greet-welcome/greet-service/**")
+						.filters(f -> f.rewritePath("/greet-welcome/greet-service/(?<segment>.*)", "/${segment}"))
+						.uri("lb://GREET-SERVICE"))
+				.route(p -> p
+						.path("/greet-welcome/welcome-service/**")
+						.filters(f -> f.rewritePath("/greet-welcome/welcome-service/(?<segment>.*)", "/${segment}"))
+						.uri("lb://WELCOME-SERVICE")).build();
+	}
+
+}

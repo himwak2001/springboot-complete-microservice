@@ -1,0 +1,31 @@
+spring:
+  application:
+    name: "gatewayserver"
+  config:
+    import: optional:configserver:http://localhost:8071
+  cloud:                # asking gateway to connect with discovery server and locate all microservices
+    gateway:
+      discovery:
+        locator:
+          enabled: false            # default routing behaviour
+          lowerCaseServiceId: true  # asking gateway to accept request with service name in lowercase
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    gateway:
+      access: unrestricted
+  info:
+    env:
+      enabled: true
+
+
+
+info:
+  app:
+    name: "gatewayserver"
+    description: "Greeting Demo Gateway Server Application"
+    version: "1.0.0"
