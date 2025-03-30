@@ -3,6 +3,8 @@ package com.app.controller;
 import com.app.dto.GreetDto;
 import com.app.entity.Welcome;
 import com.app.service.implementation.WelcomeServiceImplementation;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -16,6 +18,8 @@ import java.util.List;
 public class WelcomeController {
     @Value("${welcome-name}")
     private String name;
+
+    private static final Logger logger = LoggerFactory.getLogger(WelcomeController.class);
 
     @Autowired
     private WelcomeServiceImplementation welcomeServiceImplementation;
@@ -36,7 +40,8 @@ public class WelcomeController {
     }
 
     @GetMapping("/greet-info/{id}")
-    public GreetDto getGreetInfo(@PathVariable Integer id){
-        return welcomeServiceImplementation.getGreetInfo(id);
+    public GreetDto getGreetInfo(@RequestHeader("greet-welcome-correlation-id") String correlationId, @PathVariable Integer id){
+        logger.debug("greet-welcome-correlation-id found: {}", correlationId);
+        return welcomeServiceImplementation.getGreetInfo(id, correlationId);
     }
 }

@@ -13,5 +13,5 @@ public interface IWelcomeService {
     public List<Welcome> getWelcomeList();
 
     // method to fetch greet details
-    public GreetDto getGreetInfo(Integer Id);
+    public GreetDto getGreetInfo(Integer Id, String correlationId);
 }

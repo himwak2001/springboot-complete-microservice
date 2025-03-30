@@ -29,7 +29,7 @@ public class WelcomeServiceImplementation implements IWelcomeService {
     }
 
     @Override
-    public GreetDto getGreetInfo(Integer id) {
-        return feignClient.getGreetBasedOnId(id);
+    public GreetDto getGreetInfo(Integer id, String correlationId) {
+        return feignClient.getGreetBasedOnId(correlationId, id);
     }
 }

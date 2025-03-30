@@ -29,3 +29,8 @@ info:
     name: "gatewayserver"
     description: "Greeting Demo Gateway Server Application"
     version: "1.0.0"
+
+logging:
+  level:
+    com:
+      app: DEBUG
