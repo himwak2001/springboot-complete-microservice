@@ -9,6 +9,11 @@ spring:
         locator:
           enabled: false            # default routing behaviour
           lowerCaseServiceId: true  # asking gateway to accept request with service name in lowercase
+  security:
+    oauth2:
+      resource-server:
+        jwt:
+          jwk-set-uri: http://localhost:7080/realms/GreetWelcomeDemo/protocol/openid-connect/certs
 
 management:
   endpoints:

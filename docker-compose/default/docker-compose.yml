@@ -20,7 +20,7 @@ services:
       service: microservice-db-config
 
   configserver:
-    image: "himanshu930/configserver:s8"             # Docker image for the config server
+    image: "himanshu930/configserver:s9"             # Docker image for the config server
     container_name: configserver-ms                  # Name of the container
     ports:
       - "8071:8071"
@@ -35,7 +35,7 @@ services:
       service: microservice-base-config
 
   eurekaserver:
-    image: "himanshu930/eurekaserver:s8"             # Docker image for the config server
+    image: "himanshu930/eurekaserver:s9"             # Docker image for the config server
     container_name: eurekaserver-ms                  # Name of the container
     ports:
       - "8070:8070"
@@ -55,10 +55,16 @@ services:
       SPRING_APPLICATION_NAME: "eurekaserver"
 
   greet:
-    image: "himanshu930/greet-service:s8"
+    image: "himanshu930/greet-service:s9"
     container_name: greet-ms
     ports:
       - "8080:8080"
+    healthcheck: # Health check configuration to ensure service is running properly
+      test: "curl --fail --silent localhost:8080/actuator/health/readiness | grep UP || exit 1"
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
     depends_on:                                     # Specifies dependencies, ensuring the greetdb and configserver are healthy
       greetdb:
         condition: service_healthy
@@ -75,10 +81,16 @@ services:
       service: microservice-eureka-config
 
   welcome:
-    image: "himanshu930/welcome-service:s8"
+    image: "himanshu930/welcome-service:s9"
     container_name: welcome-ms
     ports:
       - "8090:8090"
+    healthcheck: # Health check configuration to ensure service is running properly
+      test: "curl --fail --silent localhost:8090/actuator/health/readiness | grep UP || exit 1"
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
     depends_on:
       welcomedb:
         condition: service_healthy
@@ -90,6 +102,22 @@ services:
       SPRING_APPLICATION_NAME: "welcome-service"
       # In case of external cloud database, add the external cloud database url here and remove the above cloud configuration
       SPRING_DATASOURCE_URL: "jdbc:mysql://welcomedb:3306/welcomedb?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true"
+    extends:
+      file: common-config.yml
+      service: microservice-eureka-config
+
+  gatewayserver:
+    image: "himanshu930/gatewayserver:s9"
+    container_name: gatewayserver-ms
+    ports:
+      - "8072:8072"
+    depends_on:
+      welcome:
+        condition: service_healthy
+      greet:
+        condition: service_healthy
+    environment:
+      SPRING_APPLICATION_NAME: "gatewayserver"
     extends:
       file: common-config.yml
       service: microservice-eureka-config
