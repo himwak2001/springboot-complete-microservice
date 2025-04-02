@@ -69,7 +69,7 @@
 				<version>3.4.2</version>
 				<configuration>
 					<to>
-						<image>himanshu930/${project.artifactId}:s9</image>
+						<image>himanshu930/${project.artifactId}:s12</image>
 					</to>
 				</configuration>
 			</plugin>
